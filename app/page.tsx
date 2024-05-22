@@ -1,5 +1,6 @@
 import { CategoryList } from "./_components/categories";
 import { Header } from "./_components/header";
+import { Banner } from "./_components/promo-banner";
 import { Search } from "./_components/search";
 
 export default function Home() {
@@ -11,6 +12,11 @@ export default function Home() {
       </div>
 
       <CategoryList />
+
+      <Banner
+        imageUrl="/promo-banner-01.png"
+        alt="Ate 30% de desconto em pizzas!"
+      />
     </>
   );
 }
