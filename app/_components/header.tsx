@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 
 export function Header() {
   return (
-    <div className="flex justify-between pt-6 ">
+    <div className="flex justify-between px-5 pt-6">
       <Image src="/logo.png" alt="Foods" height={30} width={100} />
       <Button
         size="icon"

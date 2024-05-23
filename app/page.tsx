@@ -10,13 +10,15 @@ export default function Home() {
       <div className="px-5 pt-6">
         <Search />
       </div>
-
-      <CategoryList />
-
-      <Banner
-        imageUrl="/promo-banner-01.png"
-        alt="Ate 30% de desconto em pizzas!"
-      />
+      <div className="px-5 pt-6">
+        <CategoryList />
+      </div>
+      <div className="px-5 pt-6">
+        <Banner
+          imageUrl="/promo-banner-01.png"
+          alt="Ate 30% de desconto em pizzas!"
+        />
+      </div>
     </>
   );
 }
