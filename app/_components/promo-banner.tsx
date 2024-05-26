@@ -1,20 +1,16 @@
-import Image from "next/image";
+import Image, { ImageProps } from "next/image";
 
-type BannerProps = {
-  alt: string;
-  imageUrl: string;
-};
-
-export function Banner({ alt, imageUrl }: BannerProps) {
+const PromoBanner = (props: ImageProps) => {
   return (
     <Image
-      className="h-auto w-full object-contain"
-      src={imageUrl}
-      alt={alt}
       height={0}
       width={0}
+      className="h-auto w-full object-contain"
       sizes="100vw"
       quality={100}
+      {...props}
     />
   );
-}
+};
+
+export default PromoBanner;
