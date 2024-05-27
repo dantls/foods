@@ -47,7 +47,7 @@ const ProductDetails = ({
     });
 
   return (
-    <div className="py-5">
+    <div className="relative z-50 mt-[-1.5rem] rounded-tl-3xl rounded-tr-3xl bg-white py-5">
       {/* RESTAURANTE */}
       <div className="flex items-center gap-[0.375rem] px-5">
         <div className="relative h-6 w-6">
@@ -74,13 +74,11 @@ const ProductDetails = ({
             <h2 className="text-xl font-semibold">
               {formatCurrency(calculateProductTotalPrice(product))}
             </h2>
-            {product.discountPercentage > 0 && (
-              <DiscountBadge product={product} />
-            )}
+            {product.discountPercent > 0 && <DiscountBadge product={product} />}
           </div>
 
           {/* PREÇO ORIGINAL */}
-          {product.discountPercentage > 0 && (
+          {product.discountPercent > 0 && (
             <p className="text-sm text-muted-foreground">
               De: {formatCurrency(Number(product.price))}
             </p>

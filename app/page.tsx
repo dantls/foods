@@ -11,7 +11,7 @@ import RestaurantList from "./_components/restaurant-list";
 const Home = async () => {
   const products = await db.product.findMany({
     where: {
-      discountPercentage: {
+      discountPercent: {
         gt: 0,
       },
     },
