@@ -1,3 +1,5 @@
+import DeliveryInfo from "@/app/_components/delivery-info";
+import ProductList from "@/app/_components/product-list";
 import { db } from "@/app/_lib/prisma";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
@@ -15,6 +17,31 @@ export default async function Restaurants({ params: { id } }: RestaurantProps) {
     where: {
       id,
     },
+    include: {
+      categories: {
+        include: {
+          products: {
+            include: {
+              restaurant: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      products: {
+        take: 10,
+        include: {
+          restaurant: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!restaurant) {
@@ -25,7 +52,7 @@ export default async function Restaurants({ params: { id } }: RestaurantProps) {
     <div>
       <RestaurantImage restaurant={restaurant} />
 
-      <div className="item-center flex justify-between px-5 pt-5">
+      <div className="item-center relative z-50 mt-[-1.5rem] flex justify-between rounded-tl-3xl rounded-tr-3xl bg-white px-5 pt-5">
         <div className="item-center flex gap-[0.375rem]">
           <div className="relative h-8 w-8">
             <Image
@@ -42,6 +69,35 @@ export default async function Restaurants({ params: { id } }: RestaurantProps) {
           <span className="text-xs font-semibold">5.0</span>
         </div>
       </div>
+
+      <div className="px-5">
+        <DeliveryInfo restaurant={restaurant} />
+      </div>
+
+      <div className="mt-3 flex gap-4 overflow-x-scroll px-5 [&::-webkit-scrollbar]:hidden">
+        {restaurant.categories.map((category) => (
+          <div
+            key={category.id}
+            className="min-w-[164px] rounded-lg bg-[#F4F4F4] text-center"
+          >
+            <span className="text-xs text-muted-foreground">
+              {category.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 space-y-4">
+        <h2 className=" px-5 font-semibold">Mais Pedidos</h2>
+        <ProductList products={restaurant.products} />
+      </div>
+
+      {restaurant.categories.map((category) => (
+        <div className="mt-6 space-y-4" key={category.id}>
+          <h2 className=" px-5 font-semibold">{category.name}</h2>
+          <ProductList products={category.products} />
+        </div>
+      ))}
     </div>
   );
 }
