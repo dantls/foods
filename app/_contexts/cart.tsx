@@ -1,15 +1,39 @@
 "use client";
 
-import { Product } from "@prisma/client";
-import { ReactNode, useState, createContext } from "react";
+import { Prisma, Product } from "@prisma/client";
+import { ReactNode, useState, createContext, useMemo } from "react";
+import { calculateProductTotalPrice } from "../_helpers/price";
 
-export interface ICartProduct extends Product {
+export interface ICartProduct
+  extends Prisma.ProductGetPayload<{
+    include: {
+      restaurant: {
+        select: {
+          deliveryFee: true;
+        };
+      };
+    };
+  }> {
   quantity: number;
 }
 
 interface CartContext {
   products: ICartProduct[];
-  addProductToCart: (product: Product, quantity: number) => void;
+  subtotalPrice: number;
+  totalPrice: number;
+  totalDiscount: number;
+  addProductToCart: (
+    product: Prisma.ProductGetPayload<{
+      include: {
+        restaurant: {
+          select: {
+            deliveryFee: true;
+          };
+        };
+      };
+    }>,
+    quantity: number,
+  ) => void;
   decreaseProductQuantity: (product: string) => void;
   increaseProductQuantity: (product: string) => void;
   removeProductFromCart: (productId: string) => void;
@@ -21,10 +45,27 @@ export const CartContext = createContext<CartContext>({
   decreaseProductQuantity: () => {},
   increaseProductQuantity: () => {},
   removeProductFromCart: () => {},
+  subtotalPrice: 0,
+  totalPrice: 0,
+  totalDiscount: 0,
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [products, setProducts] = useState<ICartProduct[]>([]);
+
+  const subtotalPrice = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return acc + Number(product.price) * product.quantity;
+    }, 0);
+  }, [products]);
+
+  const totalPrice = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return acc + calculateProductTotalPrice(product) * product.quantity;
+    }, 0);
+  }, [products]);
+
+  const totalDiscount = subtotalPrice - totalPrice;
 
   const decreaseProductQuantity = (productId: string) => {
     return setProducts((prev) =>
@@ -95,6 +136,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         decreaseProductQuantity,
         increaseProductQuantity,
         removeProductFromCart,
+        subtotalPrice,
+        totalPrice,
+        totalDiscount,
       }}
     >
       {children}

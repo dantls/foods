@@ -14,6 +14,9 @@ export default function CartItem({ cartProduct }: CartItemProps) {
     decreaseProductQuantity,
     increaseProductQuantity,
     removeProductFromCart,
+    subtotalPrice,
+    totalPrice,
+    totalDiscount,
   } = useContext(CartContext);
 
   const handleDecreaseQuantityClick = () =>
