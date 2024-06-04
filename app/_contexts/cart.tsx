@@ -21,8 +21,13 @@ interface CartContext {
   products: ICartProduct[];
   subtotalPrice: number;
   totalPrice: number;
+  totalQuantity: number;
   totalDiscount: number;
-  addProductToCart: (
+  addProductToCart: ({
+    product,
+    quantity,
+    emptyCart,
+  }: {
     product: Prisma.ProductGetPayload<{
       include: {
         restaurant: {
@@ -31,9 +36,10 @@ interface CartContext {
           };
         };
       };
-    }>,
-    quantity: number,
-  ) => void;
+    }>;
+    quantity: number;
+    emptyCart?: boolean | undefined;
+  }) => void;
   decreaseProductQuantity: (product: string) => void;
   increaseProductQuantity: (product: string) => void;
   removeProductFromCart: (productId: string) => void;
@@ -46,6 +52,7 @@ export const CartContext = createContext<CartContext>({
   increaseProductQuantity: () => {},
   removeProductFromCart: () => {},
   subtotalPrice: 0,
+  totalQuantity: 0,
   totalPrice: 0,
   totalDiscount: 0,
 });
@@ -60,12 +67,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [products]);
 
   const totalPrice = useMemo(() => {
+    return (
+      products.reduce((acc, product) => {
+        return acc + calculateProductTotalPrice(product) * product.quantity;
+      }, 0) + +Number(products[0]?.restaurant?.deliveryFee)
+    );
+  }, [products]);
+
+  const totalQuantity = useMemo(() => {
     return products.reduce((acc, product) => {
-      return acc + calculateProductTotalPrice(product) * product.quantity;
+      return acc + product.quantity;
     }, 0);
   }, [products]);
 
-  const totalDiscount = subtotalPrice - totalPrice;
+  const totalDiscount =
+    subtotalPrice - totalPrice + +Number(products[0]?.restaurant?.deliveryFee);
 
   const decreaseProductQuantity = (productId: string) => {
     return setProducts((prev) =>
@@ -104,7 +120,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const addProductToCart = (product: Product, quantity: number) => {
+  const addProductToCart = ({
+    product,
+    quantity,
+    emptyCart,
+  }: {
+    product: Prisma.ProductGetPayload<{
+      include: {
+        restaurant: {
+          select: {
+            deliveryFee: true;
+          };
+        };
+      };
+    }>;
+    quantity: number;
+    emptyCart?: boolean;
+  }) => {
+    if (emptyCart) {
+      setProducts([]);
+    }
+
     const isProductAlreadyOnCart = products.some(
       (cartProduct) => cartProduct.id === product.id,
     );
@@ -132,6 +168,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     <CartContext.Provider
       value={{
         products,
+        totalQuantity,
         addProductToCart,
         decreaseProductQuantity,
         increaseProductQuantity,
