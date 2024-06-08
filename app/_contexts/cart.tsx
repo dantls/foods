@@ -1,6 +1,6 @@
 "use client";
 
-import { Prisma, Product } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { ReactNode, useState, createContext, useMemo } from "react";
 import { calculateProductTotalPrice } from "../_helpers/price";
 
@@ -9,7 +9,9 @@ export interface ICartProduct
     include: {
       restaurant: {
         select: {
+          id: true;
           deliveryFee: true;
+          deliveryTimeMinutes: true;
         };
       };
     };
@@ -32,7 +34,9 @@ interface CartContext {
       include: {
         restaurant: {
           select: {
+            id: true;
             deliveryFee: true;
+            deliveryTimeMinutes: true;
           };
         };
       };
@@ -43,6 +47,7 @@ interface CartContext {
   decreaseProductQuantity: (product: string) => void;
   increaseProductQuantity: (product: string) => void;
   removeProductFromCart: (productId: string) => void;
+  clearCart: () => void;
 }
 
 export const CartContext = createContext<CartContext>({
@@ -51,6 +56,7 @@ export const CartContext = createContext<CartContext>({
   decreaseProductQuantity: () => {},
   increaseProductQuantity: () => {},
   removeProductFromCart: () => {},
+  clearCart: () => {},
   subtotalPrice: 0,
   totalQuantity: 0,
   totalPrice: 0,
@@ -82,6 +88,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const totalDiscount =
     subtotalPrice - totalPrice + +Number(products[0]?.restaurant?.deliveryFee);
+
+  const clearCart = () => {
+    return setProducts([]);
+  };
 
   const decreaseProductQuantity = (productId: string) => {
     return setProducts((prev) =>
@@ -129,7 +139,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       include: {
         restaurant: {
           select: {
+            id: true;
             deliveryFee: true;
+            deliveryTimeMinutes: true;
           };
         };
       };
@@ -169,6 +181,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       value={{
         products,
         totalQuantity,
+        clearCart,
         addProductToCart,
         decreaseProductQuantity,
         increaseProductQuantity,

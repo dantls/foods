@@ -35,7 +35,7 @@ export default function DeliveryInfo({ restaurant }: DeliveryInfoProps) {
           </div>
 
           <p className="text-xs font-semibold">
-            {restaurant.deliveryTimeMinutes} min
+            {Number(restaurant.deliveryTimeMinutes)} min
           </p>
         </div>
       </Card>

@@ -7,10 +7,10 @@ CREATE TABLE "Order" (
     "userId" TEXT NOT NULL,
     "restaurantsId" TEXT NOT NULL,
     "deliveryFee" DECIMAL(10,2) NOT NULL,
-    "deliveryTime" INTEGER NOT NULL,
+    "deliveryTimeMinutes" INTEGER NOT NULL,
     "subtotalPrice" DECIMAL(10,2) NOT NULL,
     "totalPrice" DECIMAL(10,2) NOT NULL,
-    "totalDiscounts" DECIMAL(10,2) NOT NULL,
+    "totalDiscount" DECIMAL(10,2) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")

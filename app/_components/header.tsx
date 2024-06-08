@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import {
   HeartIcon,
   HomeIcon,
+  LogInIcon,
   LogOutIcon,
   MenuIcon,
   ScrollTextIcon,
@@ -22,7 +23,9 @@ import { Separator } from "./ui/separator";
 
 const Header = () => {
   const { data } = useSession();
+
   const handleSignOutClick = () => signOut();
+  const handleSignInClick = () => signIn();
   return (
     <div className="flex justify-between px-5 pt-6">
       <div className="relative h-[30px] w-[100px]">
@@ -64,8 +67,11 @@ const Header = () => {
             </>
           ) : (
             <>
-              <div className="pt-10">
+              <div className="flex items-center justify-between pt-10">
                 <h2 className="font-semibold">Olá. Faça seu login!</h2>
+                <Button size="icon" onClick={handleSignInClick}>
+                  <LogInIcon />
+                </Button>
               </div>
             </>
           )}
@@ -102,22 +108,23 @@ const Header = () => {
                   <HeartIcon size={16} />
                   <span>Restaurantes Favoritos</span>
                 </Button>
+
+                <div className="py-6">
+                  <Separator />
+                </div>
+
+                <Button
+                  onClick={handleSignOutClick}
+                  variant="ghost"
+                  className="w-full justify-start space-x-3 text-sm font-normal"
+                  rounded-full
+                >
+                  <LogOutIcon size={16} />
+                  <span>Sair da Conta</span>
+                </Button>
               </>
             )}
           </div>
-          <div className="py-6">
-            <Separator />
-          </div>
-
-          <Button
-            onClick={handleSignOutClick}
-            variant="ghost"
-            className="w-full justify-start space-x-3 text-sm font-normal"
-            rounded-full
-          >
-            <LogOutIcon size={16} />
-            <span>Sair da Conta</span>
-          </Button>
         </SheetContent>
       </Sheet>
     </div>
