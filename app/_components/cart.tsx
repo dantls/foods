@@ -20,8 +20,15 @@ import {
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export default function Cart() {
+interface CartProps {
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+export default function Cart({ setIsOpen }: CartProps) {
+  const router = useRouter();
   const { products, subtotalPrice, totalPrice, totalDiscount, clearCart } =
     useContext(CartContext);
   const { data } = useSession();
@@ -63,6 +70,15 @@ export default function Cart() {
       });
 
       clearCart();
+      setIsOpen(false);
+
+      toast("Pedido finalizado com sucesso", {
+        description: "Voce pode acompanha-lo na tela dos seus pedidos",
+        action: {
+          label: "Meus Pedidos",
+          onClick: () => router.push("/my-orders"),
+        },
+      });
     } catch (error) {
       console.log(error);
     } finally {
