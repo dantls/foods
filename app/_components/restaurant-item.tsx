@@ -4,9 +4,9 @@ import { BikeIcon, HeartIcon, StarIcon, TimerIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { toast } from "sonner";
-import { toggleFavoriteRestaurant } from "../_actions/restaurants";
 import { formatCurrency } from "../_helpers/price";
+import { isRestaurantFavorited } from "../_helpers/restaurant";
+import useToggleFavoriteRestaurant from "../_hooks/useToggleFavoriteRestaurant";
 import { cn } from "../_lib/utils";
 import { Button } from "./ui/button";
 
@@ -22,21 +22,16 @@ const RestaurantItem = ({
   userFavoriteRestaurants,
 }: RestaurantItemProps) => {
   const { data } = useSession();
-  const isFavorite = userFavoriteRestaurants.some(
-    (favorite) => favorite.restaurantId === restaurant.id,
+
+  const isFavorited = isRestaurantFavorited(
+    restaurant.id,
+    userFavoriteRestaurants,
   );
-  const handleFavoriteClick = async () => {
-    if (!data?.user.id) return;
-    try {
-      await toggleFavoriteRestaurant(data?.user.id, restaurant.id);
-      toast.success(
-        isFavorite ? "Restaurante removido" : "Restaurante favoritado",
-      );
-    } catch (error) {
-      toast.error("Erro ao favoritar restaurante!");
-      console.error(error);
-    }
-  };
+  const { handleFavoriteClick } = useToggleFavoriteRestaurant({
+    restaurantId: restaurant.id,
+    userId: data?.user.id,
+    restaurantIsFavorited: isFavorited,
+  });
 
   return (
     <div>
@@ -62,7 +57,7 @@ const RestaurantItem = ({
             <Button
               onClick={handleFavoriteClick}
               size="icon"
-              className={`absolute right-2 top-2 h-7 w-7 rounded-full bg-gray-700 ${isFavorite && "bg-primary hover:bg-gray-700"}`}
+              className={`absolute right-2 top-2 h-7 w-7 rounded-full bg-gray-700 ${isFavorited && "bg-primary hover:bg-gray-700"}`}
             >
               <HeartIcon size={16} className="fill-white" />
             </Button>
