@@ -57,6 +57,9 @@ export default async function Restaurants({ params: { id } }: RestaurantProps) {
     where: {
       userId: session?.user.id,
     },
+    include: {
+      restaurant: true,
+    },
   });
 
   return (
