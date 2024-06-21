@@ -22,7 +22,6 @@ export default function Restaurants() {
     fetchRestaurants();
   }, [searchFor]);
 
-  console.log(restaurants);
   if (!searchFor) {
     return notFound();
   }

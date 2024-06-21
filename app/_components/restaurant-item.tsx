@@ -1,6 +1,7 @@
 "use client";
 import { Restaurant, UserFavoriteRestaurant } from "@prisma/client";
 import { BikeIcon, HeartIcon, StarIcon, TimerIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -10,7 +11,6 @@ import { cn } from "../_lib/utils";
 import { Button } from "./ui/button";
 
 interface RestaurantItemProps {
-  userId?: string;
   restaurant: Restaurant;
   className?: string;
   userFavoriteRestaurants: UserFavoriteRestaurant[];
@@ -19,16 +19,16 @@ interface RestaurantItemProps {
 const RestaurantItem = ({
   restaurant,
   className,
-  userId,
   userFavoriteRestaurants,
 }: RestaurantItemProps) => {
+  const { data } = useSession();
   const isFavorite = userFavoriteRestaurants.some(
     (favorite) => favorite.restaurantId === restaurant.id,
   );
   const handleFavoriteClick = async () => {
-    if (!userId) return;
+    if (!data?.user.id) return;
     try {
-      await toggleFavoriteRestaurant(userId, restaurant.id);
+      await toggleFavoriteRestaurant(data?.user.id, restaurant.id);
       toast.success(
         isFavorite ? "Restaurante removido" : "Restaurante favoritado",
       );
@@ -58,7 +58,7 @@ const RestaurantItem = ({
             <StarIcon size={12} className="fill-yellow-400 text-yellow-400" />
             <span className="text-xs font-semibold">5.0</span>
           </div>
-          {userId && (
+          {data?.user.id && (
             <Button
               onClick={handleFavoriteClick}
               size="icon"

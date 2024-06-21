@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import {
-  HeartIcon,
   HomeIcon,
   LogInIcon,
   LogOutIcon,
@@ -11,21 +10,21 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Separator } from "./ui/separator";
+import { useState } from "react";
 
 const Header = () => {
   const { data } = useSession();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleSignOutClick = () => signOut();
   const handleSignInClick = () => signIn();
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <div className="flex justify-between px-5 pt-6">
       <div className="relative h-[30px] w-[100px]">
@@ -33,16 +32,15 @@ const Header = () => {
           <Image src="/logo.png" alt="FSW Foods" fill />
         </Link>
       </div>
-      <Sheet>
-        <SheetTrigger>
-          <Button
-            size="icon"
-            variant="outline"
-            className="border-none bg-transparent"
-          >
-            <MenuIcon />
-          </Button>
-        </SheetTrigger>
+      <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <Button
+          size="icon"
+          variant="outline"
+          className="border-none bg-transparent"
+          onClick={handleMenuToggle}
+        >
+          <MenuIcon />
+        </Button>
         <SheetContent>
           <SheetHeader>
             <SheetTitle className="text-left">Menu</SheetTitle>
@@ -82,11 +80,15 @@ const Header = () => {
 
           <div className="space-y-3">
             <Button
+              onClick={handleMenuToggle}
               variant="ghost"
               className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
+              asChild
             >
-              <HomeIcon size={16} />
-              <span>Início</span>
+              <Link href="/">
+                <HomeIcon size={16} />
+                <span>Inicio</span>
+              </Link>
             </Button>
 
             {!!data?.user && (
@@ -104,11 +106,13 @@ const Header = () => {
 
                 <Button
                   variant="ghost"
-                  className="w-full justify-start space-x-3 text-sm font-normal"
-                  rounded-full
+                  className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
+                  asChild
                 >
-                  <HeartIcon size={16} />
-                  <span>Restaurantes Favoritos</span>
+                  <Link href="/my-favorite-restaurants">
+                    <ScrollTextIcon size={16} />
+                    <span>Restaurantes Favoritos</span>
+                  </Link>
                 </Button>
 
                 <div className="py-6">
