@@ -4,7 +4,7 @@ export function isRestaurantFavorited(
   restaurantId: string,
   userFavoriteRestaurants: UserFavoriteRestaurant[],
 ) {
-  return userFavoriteRestaurants.some(
+  return userFavoriteRestaurants?.some(
     (favorite) => favorite.restaurantId === restaurantId,
   );
 }

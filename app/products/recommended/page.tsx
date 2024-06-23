@@ -29,7 +29,7 @@ export default async function RecommendedProductsPage() {
           {products.map((product) => (
             <ProductItem
               key={product.id}
-              product={product}
+              product={JSON.parse(JSON.stringify(product))}
               className="min-w-full"
             />
           ))}

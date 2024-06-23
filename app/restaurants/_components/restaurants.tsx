@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 import { searchForRestaurants } from "../_actions/search";
 
 interface RestaurantProps {
-  userFavoritesRestaurants: UserFavoriteRestaurant[];
+  userFavoriteRestaurants: UserFavoriteRestaurant[];
 }
 
 export default function Restaurants({
-  userFavoritesRestaurants,
+  userFavoriteRestaurants,
 }: RestaurantProps) {
   const searchParams = useSearchParams();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -41,9 +41,9 @@ export default function Restaurants({
           {restaurants.map((restaurant) => (
             <RestaurantItem
               key={restaurant.id}
-              restaurant={restaurant}
+              restaurant={JSON.parse(JSON.stringify(restaurant))}
               className="min-w-full max-w-full"
-              userFavoritesRestaurants={userFavoritesRestaurants}
+              userFavoriteRestaurants={userFavoriteRestaurants}
             />
           ))}
         </div>

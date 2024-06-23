@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { ReactNode, useState, createContext } from "react";
 import { calculateProductTotalPrice } from "../_helpers/price";
 
-export interface CartProduct
+export interface ICartProduct
   extends Prisma.ProductGetPayload<{
     include: {
       restaurant: {
@@ -20,7 +20,7 @@ export interface CartProduct
 }
 
 interface ICartContext {
-  products: CartProduct[];
+  products: ICartProduct[];
   subtotalPrice: number;
   totalPrice: number;
   totalQuantity: number;
@@ -29,7 +29,7 @@ interface ICartContext {
     product,
     emptyCart,
   }: {
-    product: CartProduct;
+    product: ICartProduct;
     emptyCart?: boolean | undefined;
   }) => void;
   decreaseProductQuantity: (product: string) => void;
@@ -52,7 +52,7 @@ export const CartContext = createContext<ICartContext>({
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [products, setProducts] = useState<CartProduct[]>([]);
+  const [products, setProducts] = useState<ICartProduct[]>([]);
 
   const subtotalPrice = products.reduce((acc, product) => {
     return acc + Number(product.price) * product.quantity;

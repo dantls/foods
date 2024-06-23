@@ -108,7 +108,9 @@ const Home = async () => {
             </Link>
           </Button>
         </div>
-        <RestaurantList />
+        <div className="px-5 pt-6">
+          <RestaurantList />
+        </div>
       </div>
     </>
   );
